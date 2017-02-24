@@ -5,13 +5,15 @@
 # Getting Started
 
 ## Prerequisites
-To build the projects, you will need either:
 * Visual Studio 2015 with Update 3
 	* [Latest version of .NET core tooling (preview 2)](https://marketplace.visualstudio.com/items?itemName=JacquesEloff.MicrosoftASPNETandWebTools-9689)
 	* EditorConfig extension, to load the project .editorconfig file (this is natively supported in VS2017). This will enforce the code formatting rules:
 		* Spaces for indentation (4 spaces per indentation).
 		* Lines must end in crlf with no trailing whitespace.
-* Visual Studio 2017 Release Candidate, with the cross-platform development package installed (.net core tools).
+* **OR** Visual Studio 2017 Release Candidate, with the cross-platform development package installed (.net core tools).
+* NSwagStudio
+	* `choco install nswagstudio`
+	* Right now this is a system dependency instead of a nuget package, because the NSwag.MSBuild package doesn't seem to work right on appveyor.
 
 ## Try out the examples
 * Clone the repository.

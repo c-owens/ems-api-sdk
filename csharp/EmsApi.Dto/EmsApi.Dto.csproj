@@ -17,9 +17,6 @@
     </TargetFrameworkProfile>
     <TargetFrameworkVersion>v5.0</TargetFrameworkVersion>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(NuGetPackageRoot)' == ''">
-    <NuGetPackageRoot>$(UserProfile)\.nuget\packages\</NuGetPackageRoot>
-  </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
@@ -48,11 +45,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
-  <Import Project="$(NuGetPackageRoot)\NSwag.MSBuild\9.5.0\build\NSwag.MSBuild.props" Condition="'$(NSwagExe)' == ''" />
-  <Target Name="BeforeBuild">
-    <Exec Command="$(NSwagExe) swagger2csclient /input:$(ProjectDir)ems-api.json /namespace:EmsApi.Dto.V2 /output:$(ProjectDir)Generated/EmsApi.Dto.V2.cs /generateClientClasses:false /generateDtoTypes:true /generateExceptionClasses:false /generateOptionalParameters:false /generateDataAnnotations:false /generateDefaultValues:false /classStyle:Poco" />
-    <!-- <Exec Command="$(NSwagExe) swagger2tsclient /input:$(ProjectDir)ems-api.json /namespace:ems.api.v2 /moduleName:ems.api.v2 /output:$(ProjectDir)Generated/ems-api-v2.d.ts /generateClientClasses:false /generateDtoTypes:true /generateDefaultValues:false /typeStyle:Interface" /> -->
-  </Target>
   <PropertyGroup>
     <PostBuildEvent>echo Copy to EmsApi.Dto\bin for nuget package
 copy "$(TargetPath)" ..\
@@ -65,7 +57,8 @@ copy "$(ProjectDir)Generated\EmsApi.Dto.V2.cs" "$(ProjectDir)..\bin\"
 echo copy "$(ProjectDir)Generated\ems-api-v2.d.ts" "$(ProjectDir)..\bin\"</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PreBuildEvent>
+    <PreBuildEvent>echo Generating csharp DTOs...
+     nswag swagger2csclient /input:$(ProjectDir)ems-api.json /namespace:EmsApi.Dto.V2 /output:$(ProjectDir)Generated/EmsApi.Dto.V2.cs /generateClientClasses:false /generateDtoTypes:true /generateExceptionClasses:false /generateOptionalParameters:false /generateDataAnnotations:false /generateDefaultValues:false /classStyle:Poco
     </PreBuildEvent>
   </PropertyGroup>
 </Project>

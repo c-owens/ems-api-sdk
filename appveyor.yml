@@ -17,14 +17,13 @@ environment:
     secure: qTDOVAxHa2DdMrpU276vMQ==
 nuget:
   project_feed: true
+install:
+  - cmd: choco install nswagstudio
 build_script:
 - ps: '& .\csharp\EmsApi.Dto\Update-EmsApiSwaggerSpecAuto.ps1; & .\csharp\build.ps1 -Release'
 test:
   assemblies: csharp\bin\EmsApi.Client.Tests.dll
 artifacts:
 - path: csharp\bin\EmsApi.Client.*.nupkg
-  name: Release
 - path: csharp\bin\EmsApi.Client.dll
-  name: Release
 - path: csharp\bin\EmsApi.Dto.dll
-  name: Release
