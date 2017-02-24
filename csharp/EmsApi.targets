@@ -50,11 +50,14 @@
 
   </PropertyGroup>
 
-  <Target Name="EmsApiTargets">
+  <Target Name="EmsApiPreBuild">
     <Exec Command="$(RestoreCommand)" Condition="'$(RestorePackages)' == 'true'" />
-    <Exec Command="$(PackCommand)" Condition="'$(BuildPackage)' == 'true'" />
+  </Target>
 
-    <Message Text='Test: Copy SourceFiles="$(TargetPath)" DestinationFolder="$(ProjectBin)"' />
+  <Target Name="EmsApiPostBuild">
+    
+    <!-- Generate nuget package if desired -->
+    <Exec Command="$(PackCommand)" Condition="'$(BuildPackage)' == 'true'" />
 
     <!-- Copy output assemblies to the project's bin directory -->
     <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(ProjectBin)" />
@@ -62,17 +65,16 @@
     <!-- Copy output xml files to the project's bin directory -->
     <Copy Condition="Exists('$(XmlInfoFile)')" SourceFiles="$(XmlInfoFile)" DestinationFolder="$(ProjectBin)"  />
 
-    <Message Text='Copy SourceFiles="$(TargetPath)" DestinationFolder="$(SolutionBin)"' />
-
     <!-- Copy output assemblies to the solution's bin directory -->
     <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(SolutionBin)" />
   </Target>
 
-  <!-- Register the target to run after the build -->
+  <!-- Register the target to run before and after the build -->
   <PropertyGroup>
     <BuildDependsOn>
+      EmsApiPreBuild;
       $(BuildDependsOn);
-      EmsApiTargets
+      EmsApiPostBuild;
     </BuildDependsOn>
   </PropertyGroup>
 
