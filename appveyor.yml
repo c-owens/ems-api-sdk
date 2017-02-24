@@ -19,11 +19,12 @@ nuget:
   project_feed: true
 install:
   - ps: 'choco install nswagstudio; refreshenv'
-build_script:
-- ps: '& .\csharp\EmsApi.Dto\Update-EmsApiSwaggerSpecAuto.ps1; & .\csharp\build.ps1 -Release'
+build:
+  project: csharp\EmsApi.sln
+  verbosity: normal
 test:
   assemblies: csharp\bin\EmsApi.Client.Tests.dll
 artifacts:
-- path: csharp\bin\EmsApi.Client.*.nupkg
-- path: csharp\bin\EmsApi.Client.dll
-- path: csharp\bin\EmsApi.Dto.dll
+- path: csharp\bin\*.nupkg
+- path: csharp\bin\*.dll
+- path: csharp\bin\*.cs

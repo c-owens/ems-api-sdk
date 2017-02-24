@@ -37,6 +37,9 @@
     <DocumentationFile>bin\Release\EmsApi.Dto.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
+    <None Include="EmsApi.Dto.nuspec">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="project.json" />
     <!-- A reference to the entire .NET Framework is automatically included -->
   </ItemGroup>
@@ -45,6 +48,13 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
+  <Import Project="$(SolutionDir)EmsApi.targets" />
+  <PropertyGroup>
+    <BuildDependsOn>
+      $(BuildDependsOn);
+      BuildNugetPackage;
+    </BuildDependsOn>
+  </PropertyGroup>
   <PropertyGroup>
     <PostBuildEvent>echo Copy to EmsApi.Dto\bin for nuget package
 copy "$(TargetPath)" ..\

@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+
+    <!-- Packages go to csharp\bin -->
+    <PackageOutputDir>$(SolutionDir)bin</PackageOutputDir>
+
+    <!-- Each project has a nuspec file named after the csproj -->
+    <NuspecFile>$(ProjectDir)$(ProjectName).nuspec</NuspecFile>
+
+    <PackCommand>nuget.exe pack "$(NuspecFile)" -Properties "Configuration=$(Configuration);Platform=$(Platform)" -NonInteractive -OutputDirectory "$(PackageOutputDir)" -symbols</PackCommand>
+
+  </PropertyGroup>
+
+  <!-- Appveyor sets this environment variable -->
+  <PropertyGroup Condition="'$(APPVEYOR)' == 'True'" >
+
+    <Branch Condition="'$(APPVEYOR_REPO_BRANCH)' != 'master'">-Suffix $(APPVEYOR_REPO_BRANCH)</Branch>
+    <PackCommand>nuget.exe pack "$(NuspecFile)" -Properties "Configuration=$(Configuration);Platform=$(Platform)" -NonInteractive -OutputDirectory "$(PackageOutputDir)" -symbols -Version $(APPVEYOR_BUILD_VERSION) $(Branch)</PackCommand>
+
+  </PropertyGroup>
+
+  <Target Name="BuildNugetPackage">
+    <Exec Command="$(PackCommand)" />
+  </Target>
+
+</Project>
