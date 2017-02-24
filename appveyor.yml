@@ -18,7 +18,9 @@ environment:
 nuget:
   project_feed: true
 install:
-  - cmd: choco install nswagstudio
+  - ps: | 
+  choco install nswagstudio
+  refreshenv
 build_script:
 - ps: '& .\csharp\EmsApi.Dto\Update-EmsApiSwaggerSpecAuto.ps1; & .\csharp\build.ps1 -Release'
 test:
