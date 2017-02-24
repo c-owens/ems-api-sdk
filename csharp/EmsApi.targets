@@ -2,26 +2,78 @@
 <Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
 
-    <!-- Packages go to csharp\bin -->
-    <PackageOutputDir>$(SolutionDir)bin</PackageOutputDir>
+    <!-- Define some directories to use -->
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">$(MSBuildThisFileDirectory)</SolutionDir>
+    <SolutionBin Condition=" '$(SolutionBin)' == '' ">$(SolutionDir)bin</SolutionBin>
+    <PackagesDir Condition=" '$(PackagesDir)' == '' ">$(SolutionDir)packages</PackagesDir>
+    <ProjectBin Condition=" '$(ProjectBin)' == '' ">$(ProjectDir)bin</ProjectBin>
 
-    <!-- Each project has a nuspec file named after the csproj -->
+    <!-- True if we should automatically restore nuget packages -->
+    <RestorePackages Condition="'$(RestorePackages)' == ''">true</RestorePackages>
+
+    <!-- True if we should build a nuget package for this project -->
+    <BuildPackage Condition=" '$(BuildPackage)' == '' ">false</BuildPackage>
+
+    <!-- The location of the nuspec file, if it exists -->
     <NuspecFile>$(ProjectDir)$(ProjectName).nuspec</NuspecFile>
 
-    <PackCommand>nuget.exe pack "$(NuspecFile)" -Properties "Configuration=$(Configuration);Platform=$(Platform)" -NonInteractive -OutputDirectory "$(PackageOutputDir)" -symbols</PackCommand>
+    <!-- Where we write out the XML file describing the classes of an assembly -->
+    <XmlInfoFile>$(TargetDir)$(TargetName).xml</XmlInfoFile>
+
+    <!-- The command to run when restoring nuget packages -->
+    <RestoreCommand>nuget.exe restore "$(ProjectPath)" -PackagesDirectory "$(PackagesDir)"</RestoreCommand>
+
+    <!-- The command to run when building nuget packages -->
+    <PackCommand>nuget.exe pack "$(NuspecFile)" -Properties "Configuration=$(Configuration);Platform=$(Platform)" -OutputDirectory "$(SolutionBin)" -NonInteractive</PackCommand>
 
   </PropertyGroup>
 
   <!-- Appveyor sets this environment variable -->
   <PropertyGroup Condition="'$(APPVEYOR)' == 'True'" >
 
+    <!-- Add a pre-release suffix if this is building on a branch that isn't master -->
     <Branch Condition="'$(APPVEYOR_REPO_BRANCH)' != 'master'">-Suffix $(APPVEYOR_REPO_BRANCH)</Branch>
-    <PackCommand>nuget.exe pack "$(NuspecFile)" -Properties "Configuration=$(Configuration);Platform=$(Platform)" -NonInteractive -OutputDirectory "$(PackageOutputDir)" -symbols -Version $(APPVEYOR_BUILD_VERSION) $(Branch)</PackCommand>
+    <SafeBranch Condition="'$(Branch)' != ''">$(Branch.Replace('/', '-').Replace('\', '-'))</SafeBranch>
+
+    <!-- This does not have the build number on it, that one is set to 0. -->
+    <Version>$(APPVEYOR_BUILD_VERSION)</Version>
+
+    <!-- Split it into parts (we expect major.minor.build -->
+    <Major>$(Version.Split( '.' )[0])</Major>
+    <Minor>$(Version.Split( '.' )[1])</Minor>
+    <Build>$(APPVEYOR_BUILD_NUMBER)</Build>
+
+    <PackageVersion>$(Major).$(Minor).$(Build)</PackageVersion>
+
+    <!-- Override the pack command with version and suffix -->
+    <PackCommand>$(PackCommand) -Version $(PackageVersion) $(SafeBranch)</PackCommand>
 
   </PropertyGroup>
 
-  <Target Name="BuildNugetPackage">
-    <Exec Command="$(PackCommand)" />
+  <Target Name="EmsApiTargets">
+    <Exec Command="$(RestoreCommand)" Condition="'$(RestorePackages)' == 'true'" />
+    <Exec Command="$(PackCommand)" Condition="'$(BuildPackage)' == 'true'" />
+
+    <Message Text='Test: Copy SourceFiles="$(TargetPath)" DestinationFolder="$(ProjectBin)"' />
+
+    <!-- Copy output assemblies to the project's bin directory -->
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(ProjectBin)" />
+
+    <!-- Copy output xml files to the project's bin directory -->
+    <Copy Condition="Exists('$(XmlInfoFile)')" SourceFiles="$(XmlInfoFile)" DestinationFolder="$(ProjectBin)"  />
+
+    <Message Text='Copy SourceFiles="$(TargetPath)" DestinationFolder="$(SolutionBin)"' />
+
+    <!-- Copy output assemblies to the solution's bin directory -->
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(SolutionBin)" />
   </Target>
+
+  <!-- Register the target to run after the build -->
+  <PropertyGroup>
+    <BuildDependsOn>
+      $(BuildDependsOn);
+      EmsApiTargets
+    </BuildDependsOn>
+  </PropertyGroup>
 
 </Project>

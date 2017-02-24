@@ -16,6 +16,8 @@
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
     <TargetFrameworkVersion>v5.0</TargetFrameworkVersion>
+    <RestorePackages>true</RestorePackages>
+    <BuildPackage>true</BuildPackage>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -49,25 +51,14 @@
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <Import Project="$(SolutionDir)EmsApi.targets" />
-  <PropertyGroup>
-    <BuildDependsOn>
-      $(BuildDependsOn);
-      BuildNugetPackage;
-    </BuildDependsOn>
-  </PropertyGroup>
   <Target Name="BeforeBuild">
     <Exec Command="$(NSwagExe) swagger2csclient /input:$(ProjectDir)ems-api.json /namespace:EmsApi.Dto.V2 /output:$(ProjectDir)Generated/EmsApi.Dto.V2.cs /generateClientClasses:false /generateDtoTypes:true /generateExceptionClasses:false /generateOptionalParameters:false /generateDataAnnotations:false /generateDefaultValues:false /classStyle:Poco" />
   </Target>
   <PropertyGroup>
-    <PostBuildEvent>echo Copy to EmsApi.Dto\bin for nuget package
-copy "$(TargetPath)" ..\
-copy "$(TargetDir)EmsApi.Dto.xml" ..\
-
-echo Copy generated output to csharp\bin
-mkdir "$(ProjectDir)..\bin\"
-copy "$(TargetPath)" "$(ProjectDir)..\bin\"
-copy "$(ProjectDir)Generated\EmsApi.Dto.V2.cs" "$(ProjectDir)..\bin\"
-echo copy "$(ProjectDir)Generated\ems-api-v2.d.ts" "$(ProjectDir)..\bin\"</PostBuildEvent>
+    <PostBuildEvent>echo Copy generated output to csharp\bin
+mkdir "$(SolutionBin)"
+copy "$(ProjectDir)Generated\EmsApi.Dto.V2.cs" "$(SolutionBin)"
+echo copy "$(ProjectDir)Generated\ems-api-v2.d.ts" "$(SolutionBin)"</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
     <PreBuildEvent>
