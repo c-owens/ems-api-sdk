@@ -55,6 +55,9 @@
       BuildNugetPackage;
     </BuildDependsOn>
   </PropertyGroup>
+  <Target Name="BeforeBuild">
+    <Exec Command="$(NSwagExe) swagger2csclient /input:$(ProjectDir)ems-api.json /namespace:EmsApi.Dto.V2 /output:$(ProjectDir)Generated/EmsApi.Dto.V2.cs /generateClientClasses:false /generateDtoTypes:true /generateExceptionClasses:false /generateOptionalParameters:false /generateDataAnnotations:false /generateDefaultValues:false /classStyle:Poco" />
+  </Target>
   <PropertyGroup>
     <PostBuildEvent>echo Copy to EmsApi.Dto\bin for nuget package
 copy "$(TargetPath)" ..\
@@ -67,8 +70,7 @@ copy "$(ProjectDir)Generated\EmsApi.Dto.V2.cs" "$(ProjectDir)..\bin\"
 echo copy "$(ProjectDir)Generated\ems-api-v2.d.ts" "$(ProjectDir)..\bin\"</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PreBuildEvent>echo Generating csharp DTOs...
-     nswag swagger2csclient /input:$(ProjectDir)ems-api.json /namespace:EmsApi.Dto.V2 /output:$(ProjectDir)Generated/EmsApi.Dto.V2.cs /generateClientClasses:false /generateDtoTypes:true /generateExceptionClasses:false /generateOptionalParameters:false /generateDataAnnotations:false /generateDefaultValues:false /classStyle:Poco
+    <PreBuildEvent>
     </PreBuildEvent>
   </PropertyGroup>
 </Project>
