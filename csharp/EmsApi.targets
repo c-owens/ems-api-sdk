@@ -4,6 +4,8 @@
 
     <!-- Define some directories to use -->
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">$(MSBuildThisFileDirectory)</SolutionDir>
+
+    <!-- Note: Nuget really doesn't seem to like trailing slashes -->
     <SolutionBin Condition=" '$(SolutionBin)' == '' ">$(SolutionDir)bin</SolutionBin>
     <PackagesDir Condition=" '$(PackagesDir)' == '' ">$(SolutionDir)packages</PackagesDir>
     <ProjectBin Condition=" '$(ProjectBin)' == '' ">$(ProjectDir)bin</ProjectBin>
@@ -25,6 +27,10 @@
 
     <!-- The command to run when building nuget packages -->
     <PackCommand>nuget.exe pack "$(NuspecFile)" -Properties "Configuration=$(Configuration);Platform=$(Platform)" -OutputDirectory "$(SolutionBin)" -NonInteractive</PackCommand>
+
+    <!-- This is a total hack. The NSwag.msbuild nuget package is supposed to define this, but I can't get it to work on appveyor -->
+    <NSwagRoot>$(PackagesDir)\nswag.msbuild\9.5.0\build\</NSwagRoot>
+    <NSwagExe Condition="'$(NSwagExe)' == '' AND Exists( '$(NSwagRoot)' )">$(NSwagRoot)nswag.exe</NSwagExe>
 
   </PropertyGroup>
 
