@@ -61,9 +61,6 @@
   </Target>
 
   <Target Name="EmsApiPostBuild">
-    
-    <!-- Generate nuget package if desired -->
-    <Exec Command="$(PackCommand)" Condition="'$(BuildPackage)' == 'true'" />
 
     <!-- Copy output assemblies to the project's bin directory -->
     <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(ProjectBin)" />
@@ -73,6 +70,9 @@
 
     <!-- Copy output assemblies to the solution's bin directory -->
     <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(SolutionBin)" />
+
+    <!-- Generate nuget package if desired -->
+    <Exec Command="$(PackCommand)" Condition="'$(BuildPackage)' == 'true'" />
   </Target>
 
   <!-- Register the target to run before and after the build -->
