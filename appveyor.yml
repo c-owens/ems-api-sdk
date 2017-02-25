@@ -19,7 +19,7 @@ nuget:
   project_feed: true
 build:
   project: csharp\EmsApi.sln
-  verbosity: normal
+  verbosity: minimal
 test:
   assemblies: csharp\EmsApi.Tests\bin\Release\EmsApi.Tests.dll
 artifacts:
