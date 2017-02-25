@@ -51,8 +51,8 @@
 
     <PackageVersion>$(Major).$(Minor).$(Build)</PackageVersion>
 
-    <!-- Override the pack command with version and suffix -->
-    <PackCommand>$(PackCommand) -Version $(PackageVersion) $(SafeBranch)</PackCommand>
+    <!-- Override the pack command with version and suffix (and also make it quiet, to save reading through the build output). -->
+    <PackCommand>$(PackCommand) -Verbosity quiet -Version $(PackageVersion) $(SafeBranch)</PackCommand>
 
   </PropertyGroup>
 
