@@ -23,7 +23,7 @@
     <XmlInfoFile>$(TargetDir)$(TargetName).xml</XmlInfoFile>
 
     <!-- The command to run when restoring nuget packages -->
-    <RestoreCommand>nuget.exe restore "$(ProjectPath)" -PackagesDirectory "$(PackagesDir)"</RestoreCommand>
+    <RestoreCommand>nuget.exe restore "$(ProjectPath)" -PackagesDirectory "$(PackagesDir)" -Verbosity Quiet</RestoreCommand>
 
     <!-- The command to run when building nuget packages -->
     <PackCommand>nuget.exe pack "$(NuspecFile)" -Properties "Configuration=$(Configuration);Platform=$(Platform)" -OutputDirectory "$(SolutionBin)" -NonInteractive</PackCommand>
@@ -52,7 +52,7 @@
     <PackageVersion>$(Major).$(Minor).$(Build)</PackageVersion>
 
     <!-- Override the pack command with version and suffix (and also make it quiet, to save reading through the build output). -->
-    <PackCommand>$(PackCommand) -Verbosity quiet -Version $(PackageVersion) $(SafeBranch)</PackCommand>
+    <PackCommand>$(PackCommand) -Verbosity Quiet -Version $(PackageVersion) $(SafeBranch)</PackCommand>
 
   </PropertyGroup>
 

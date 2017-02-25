@@ -20,6 +20,8 @@ nuget:
 build:
   project: csharp\EmsApi.sln
   verbosity: normal
+test:
+  assemblies: csharp\EmsApi.Tests\bin\Release\EmsApi.Tests.dll
 artifacts:
 - path: csharp\bin\*.nupkg
 - path: csharp\bin\*.dll
