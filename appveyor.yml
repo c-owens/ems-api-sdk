@@ -17,11 +17,12 @@ environment:
     secure: qTDOVAxHa2DdMrpU276vMQ==
 nuget:
   project_feed: true
+before_build:
+- ps: '& csharp\EmsApi.Dto\Update-EmsApiSwaggerSpecAuto.ps1'
 build:
   project: csharp\EmsApi.sln
   verbosity: minimal
-test:
-  assemblies: csharp\EmsApi.Tests\bin\Release\EmsApi.Tests.dll
+test: off
 artifacts:
 - path: csharp\bin\*.nupkg
 - path: csharp\bin\*.dll
